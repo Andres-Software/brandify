@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(laravel new *)",
+      "Bash(php -l app/Filament/Resources/Proposals/Schemas/ProposalForm.php)",
+      "Bash(php -l app/Filament/Resources/Directories/DirectoryResource.php)",
+      "Bash(php -l app/Filament/Resources/Proposals/ProposalResource.php)"
+    ]
+  }
+}
