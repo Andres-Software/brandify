@@ -20,8 +20,8 @@
         body {
             display: flex;
             flex-direction: column;
-            background-color: #020617; /* slate-950 */
-            color: #e2e8f0; /* slate-200 */
+            background-color: #e2e8f0;  /* slate-200 */
+            color: #020617; /* slate-950 */
             font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 

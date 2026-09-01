@@ -46,6 +46,12 @@ class GammaEmbedParser
             throw new InvalidEmbedException('O <iframe> encontrado não possui o atributo "src".');
         }
 
+        $scheme = parse_url($src, PHP_URL_SCHEME);
+
+        if (! in_array($scheme, ['http', 'https'], true)) {
+            throw new InvalidEmbedException('O "src" do <iframe> precisa ser uma URL http(s) válida.');
+        }
+
         return new ParsedEmbed(
             src: $src,
             title: $title !== '' ? $title : null,

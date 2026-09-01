@@ -46,4 +46,18 @@ class GammaEmbedParserTest extends TestCase
         $this->assertSame('https://gamma.app/embed/abc123', $parsed->src);
         $this->assertNull($parsed->title);
     }
+
+    public function test_it_throws_when_src_uses_a_non_http_scheme(): void
+    {
+        $this->expectException(InvalidEmbedException::class);
+
+        (new GammaEmbedParser())->parse('<iframe src="javascript:alert(1)"></iframe>');
+    }
+
+    public function test_it_throws_when_src_is_a_data_uri(): void
+    {
+        $this->expectException(InvalidEmbedException::class);
+
+        (new GammaEmbedParser())->parse('<iframe src="data:text/html,<script>alert(1)</script>"></iframe>');
+    }
 }

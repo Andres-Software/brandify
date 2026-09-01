@@ -73,6 +73,7 @@ class ManageGeneralSettings extends SettingsPage
                     FileUpload::make('logo_path')
                         ->label('Logo')
                         ->image()
+                        ->maxSize(5120)
                         ->disk('public')
                         ->directory('branding')
                         ->live()
