@@ -8,9 +8,11 @@ class GeneralSettings extends Settings
 {
     public ?string $logo_path;
 
-    public string $company_name;
+    public ?string $company_name;
 
     public bool $show_topbar;
+
+    public string $bar_color;
 
     public string $slug_mode;
 

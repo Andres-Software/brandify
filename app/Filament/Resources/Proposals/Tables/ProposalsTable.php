@@ -3,13 +3,16 @@
 namespace App\Filament\Resources\Proposals\Tables;
 
 use App\Models\Proposal;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Js;
 
 class ProposalsTable
 {
@@ -29,8 +32,6 @@ class ProposalsTable
                 TextColumn::make('slug')
                     ->label('URL pública')
                     ->getStateUsing(fn (Proposal $record) => $record->public_url)
-                    ->copyable()
-                    ->copyMessage('URL copiada!')
                     ->searchable(['slug'])
                     ->sortable(['slug']),
                 TextColumn::make('expires_at')
@@ -58,6 +59,18 @@ class ProposalsTable
                     ->query(fn (Builder $query) => $query->whereNotNull('expires_at')->where('expires_at', '<=', now())),
             ])
             ->recordActions([
+                Action::make('copyUrl')
+                    ->label('Copiar link')
+                    ->icon(Heroicon::OutlinedLink)
+                    ->color('gray')
+                    ->alpineClickHandler(function (Proposal $record) {
+                        $urlJs = Js::from($record->public_url);
+
+                        return <<<JS
+                            window.navigator.clipboard.writeText({$urlJs})
+                            \$tooltip('URL copiada!', { theme: \$store.theme, timeout: 2000 })
+                            JS;
+                    }),
                 EditAction::make(),
             ])
             ->toolbarActions([

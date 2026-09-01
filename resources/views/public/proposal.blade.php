@@ -30,7 +30,7 @@
             gap: 0.75rem;
             padding: 0.75rem 1.5rem;
             background-color: #0f172a; /* slate-900 */
-            border-bottom: 1px solid #10b981; /* emerald-500 */
+            border-bottom: 1px solid {{ \App\Support\BarColor::hex($settings->bar_color) }};
             flex-shrink: 0;
         }
 
@@ -51,7 +51,7 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 9999px;
-            background-color: #10b981; /* emerald-500 */
+            background-color: {{ \App\Support\BarColor::hex($settings->bar_color) }};
             flex-shrink: 0;
         }
 
@@ -77,14 +77,16 @@
             @else
                 <span class="accent-dot"></span>
             @endif
-            <span class="company-name">{{ $settings->company_name }}</span>
+            @if (filled($settings->company_name))
+                <span class="company-name">{{ $settings->company_name }}</span>
+            @endif
         </header>
     @endif
 
     <main>
         <iframe
             src="{{ $proposal->embed_src }}"
-            title="{{ $proposal->description ?? $settings->company_name }}"
+            title="{{ $proposal->description ?? $settings->company_name ?? '' }}"
             allow="fullscreen"
         ></iframe>
     </main>
