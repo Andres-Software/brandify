@@ -32,7 +32,8 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->profile()
             ->favicon(asset('favicon.ico'))
-            ->brandLogo(asset('logo.png'))
+            ->brandLogo(asset('logo-preto.png'))
+            ->darkModeBrandLogo(asset('logo.png'))
             ->brandLogoHeight('2rem')
             ->colors([
                 'primary' => Color::Emerald,
