@@ -44,6 +44,8 @@ class Proposal extends Model
 
     public function getPublicUrlAttribute(): string
     {
-        return url("/{$this->directory->slug}/{$this->slug}");
+        return $this->directory !== null
+            ? url("/r/{$this->directory->slug}/{$this->slug}")
+            : url("/r/{$this->slug}");
     }
 }

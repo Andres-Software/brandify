@@ -71,7 +71,7 @@ class ProposalForm
                     ->relationship('directory', 'name')
                     ->searchable()
                     ->preload()
-                    ->required()
+                    ->helperText('Opcional — sem diretório, a URL pública fica na raiz (dominio.com/r/{slug}).')
                     ->createOptionForm([
                         TextInput::make('name')
                             ->label('Nome')
@@ -96,7 +96,7 @@ class ProposalForm
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true)
-                    ->helperText('Usado na URL pública: dominio.com/{diretorio}/{slug}'),
+                    ->helperText('Usado na URL pública: dominio.com/r/{diretorio}/{slug} (ou dominio.com/r/{slug} sem diretório)'),
 
                 DateTimePicker::make('expires_at')
                     ->label('Expira em')

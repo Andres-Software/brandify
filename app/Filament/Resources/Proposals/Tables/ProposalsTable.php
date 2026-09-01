@@ -28,6 +28,7 @@ class ProposalsTable
                     ->limit(40),
                 TextColumn::make('directory.name')
                     ->label('Diretório')
+                    ->placeholder('—')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('slug')

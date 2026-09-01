@@ -7,7 +7,8 @@
       "Bash(php -l app/Filament/Resources/Proposals/ProposalResource.php)",
       "Bash(node check.js)",
       "Bash(SCRATCH=/private/tmp/claude-501/-Users-candres-Desenvolvimento-infra-podman-ambiente-desenv-projetos-pessoal-brandify/5b465347-dca7-477d-84b3-72688aaa66d8/scratchpad *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(node check_dir.js)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-candres-Desenvolvimento-infra-podman-ambiente-desenv-projetos-pessoal-brandify/5b465347-dca7-477d-84b3-72688aaa66d8/scratchpad"
