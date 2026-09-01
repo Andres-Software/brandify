@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Widgets\LatestProposals;
 use App\Filament\Widgets\ProposalStatsOverview;
 use Filament\Enums\ThemeMode;
@@ -28,8 +29,11 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->profile()
+            ->favicon(asset('favicon.ico'))
+            ->brandLogo(asset('logo.png'))
+            ->brandLogoHeight('2rem')
             ->colors([
                 'primary' => Color::Emerald,
             ])
