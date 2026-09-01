@@ -22,6 +22,8 @@ class ProposalResource extends Resource
 
     protected static ?string $navigationLabel = 'Propostas';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'proposta';
 
     protected static ?string $pluralModelLabel = 'propostas';

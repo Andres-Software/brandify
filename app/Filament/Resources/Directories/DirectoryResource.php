@@ -24,6 +24,8 @@ class DirectoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Diretórios';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'diretório';
 
     protected static ?string $pluralModelLabel = 'diretórios';
