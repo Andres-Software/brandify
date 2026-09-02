@@ -18,6 +18,8 @@ class GeneralSettings extends Settings
 
     public ?string $slug_prefix;
 
+    public ?string $backup_email;
+
     public static function group(): string
     {
         return 'general';

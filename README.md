@@ -1,3 +1,32 @@
+## Backup automático via email
+
+O Brandify envia um backup em CSV (pastas e propostas) por email usando o Resend. O backup pode ser disparado de duas formas:
+
+- **Manual**: botão "Enviar backup agora" na tela de Configurações do painel.
+- **Agendado**: comando artisan `backup:send`, pensado para ser chamado direto pelo cron do painel de hosting (não depende do Laravel Scheduler nem de um queue worker).
+
+### Configuração
+
+1. Defina `MAIL_MAILER=resend` e `RESEND_API_KEY=<sua chave>` no `.env`.
+2. Configure `MAIL_FROM_ADDRESS` com um endereço de um domínio verificado na sua conta Resend (https://resend.com/domains).
+3. Na tela de Configurações do painel, preencha o campo **Email de backup** — é para onde o backup será enviado.
+
+### Agendando o envio no hosting compartilhado
+
+Como hosting compartilhado normalmente não permite manter um processo rodando continuamente (nem `schedule:run` a cada minuto nem um queue worker), aponte o cron job do painel do host diretamente para o comando artisan:
+
+```bash
+php /caminho/para/o/projeto/artisan backup:send >> /caminho/para/o/projeto/storage/logs/backup-cron.log 2>&1
+```
+
+Ajuste a frequência (ex: diária, semanal) direto no painel de cron do hosting (cPanel, Hostinger, etc). O comando é síncrono e envia o email na hora — não é necessário worker de fila.
+
+### Importando um backup (restore)
+
+Na mesma tela de Configurações, o botão "Importar backup" permite enviar os arquivos `directories.csv` e `proposals.csv` (gerados por um backup anterior) para **substituir por completo** os dados atuais de pastas e propostas. Essa ação não pode ser desfeita.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

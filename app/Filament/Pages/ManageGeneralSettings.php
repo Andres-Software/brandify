@@ -2,19 +2,25 @@
 
 namespace App\Filament\Pages;
 
+use App\Mail\BackupMail;
+use App\Services\BackupCsvService;
 use App\Settings\GeneralSettings;
 use App\Support\BarColor;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
@@ -66,6 +72,12 @@ class ManageGeneralSettings extends SettingsPage
                         ->label('Prefixo do slug')
                         ->maxLength(255)
                         ->visible(fn (Get $get) => $get('slug_mode') === 'prefix'),
+
+                    TextInput::make('backup_email')
+                        ->label('Email de backup')
+                        ->email()
+                        ->maxLength(255)
+                        ->helperText('Endereço que recebe o backup em CSV, manual ou agendado.'),
                 ])
                     ->columnSpan(2),
 
@@ -105,5 +117,93 @@ class ManageGeneralSettings extends SettingsPage
                 ])
                     ->columnSpan(1),
             ]);
+    }
+
+    /**
+     * @return array<Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('sendBackup')
+                ->label('Enviar backup agora')
+                ->icon(Heroicon::OutlinedEnvelope)
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalDescription('Um CSV com pastas e propostas será enviado para o email de backup configurado.')
+                ->action(function (BackupCsvService $csvService, GeneralSettings $settings) {
+                    $email = $settings->backup_email;
+
+                    if (blank($email)) {
+                        Notification::make()
+                            ->title('Configure o email de backup antes de enviar.')
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    $csvPaths = $csvService->export();
+
+                    try {
+                        Mail::to($email)->send(new BackupMail($csvPaths));
+
+                        Notification::make()
+                            ->title("Backup enviado para {$email}.")
+                            ->success()
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Log::error('Falha ao enviar backup via painel.', ['email' => $email, 'error' => $e->getMessage()]);
+
+                        Notification::make()
+                            ->title('Falha ao enviar backup.')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    } finally {
+                        foreach ($csvPaths as $path) {
+                            @unlink($path);
+                        }
+                    }
+                }),
+
+            Action::make('importBackup')
+                ->label('Importar backup')
+                ->icon(Heroicon::OutlinedArrowUpTray)
+                ->color('danger')
+                ->schema([
+                    FileUpload::make('directories_csv')
+                        ->label('directories.csv')
+                        ->acceptedFileTypes(['text/csv', 'text/plain'])
+                        ->required()
+                        ->storeFiles(false),
+
+                    FileUpload::make('proposals_csv')
+                        ->label('proposals.csv')
+                        ->acceptedFileTypes(['text/csv', 'text/plain'])
+                        ->required()
+                        ->storeFiles(false),
+                ])
+                ->requiresConfirmation()
+                ->modalHeading('Importar backup')
+                ->modalDescription('Isso vai substituir todos os dados atuais de pastas e propostas pelo conteúdo dos arquivos enviados. Essa ação não pode ser desfeita.')
+                ->modalSubmitActionLabel('Substituir dados')
+                ->action(function (array $data, BackupCsvService $csvService) {
+                    try {
+                        $csvService->import($data['directories_csv'], $data['proposals_csv']);
+
+                        Notification::make()
+                            ->title('Backup importado com sucesso.')
+                            ->success()
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->title('Falha ao importar backup.')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
+        ];
     }
 }
