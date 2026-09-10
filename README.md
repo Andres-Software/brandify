@@ -109,6 +109,26 @@ Sem nenhum ajuste, o Brandify ficaria acessível em `dominio.com/brandify/public
 
 O segmento da URL (`app` no exemplo) é independente do nome da pasta no disco (`brandify`) — ajuste a regra do `.htaccess` se quiser outro segmento ou outro nome de pasta, eles não precisam coincidir.
 
+## Deploy em hosting compartilhado (sem SSH root, sem Composer global)
+
+Depois que os arquivos chegam ao servidor (Git deploy ou upload manual), rode:
+
+```bash
+sh bin/deploy-setup.sh
+```
+
+O script:
+
+1. Localiza um PHP >= 8.4 (o `composer.lock` já exige isso, mesmo o `composer.json` pedindo `^8.3` — pacotes recentes do Symfony travaram em `>=8.4.1`). Se o `php` do PATH for uma versão antiga, ele procura automaticamente em `/opt/cpanel/ea-php*/` (comum em cPanel). Se não encontrar, informe o caminho manualmente: `PHP_BIN=/caminho/para/php sh bin/deploy-setup.sh`.
+2. Instala o Composer localmente (`composer.phar`) se não houver um `composer` global disponível.
+3. Roda `composer install --no-dev --optimize-autoloader`.
+4. Gera `APP_KEY` se estiver vazio no `.env`.
+5. Roda `php artisan migrate --force`.
+6. Cria o link `public/storage` (necessário para uploads do painel, como a logo em Configurações, ficarem acessíveis publicamente) — só se ainda não existir.
+7. Limpa e reconstrói os caches de config, rotas e views.
+
+Rode de novo a cada deploy com mudanças de código — os passos 4 e 6 são idempotentes (só agem se necessário).
+
 ## Ajuste de permissões em hosting compartilhado
 
 O script `bin/fix-permissions.sh` ajusta as permissões de diretórios e arquivos após o deploy em hosting compartilhado. Copie `.env-security.example` para `.env-security` e ajuste os valores conforme o seu provedor.

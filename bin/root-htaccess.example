@@ -25,6 +25,11 @@
 # já apontando direto para brandify/public/), este arquivo não é
 # necessário — o Apache/nginx já resolve isso pela configuração do
 # virtual host, não por reescrita de URL.
+#
+# Se o public_html/.htaccess já existir (ex: cPanel costuma gerar um
+# bloco "# php -- BEGIN cPanel-generated handler, do not edit" para
+# fixar a versão do PHP do diretório), NÃO sobrescreva o arquivo —
+# apenas adicione as linhas abaixo depois do que já existe.
 
 RewriteEngine On
 RewriteCond %{REQUEST_URI} ^/app/(?!public/)
