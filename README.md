@@ -105,7 +105,9 @@ public_html/
     └── public/
 ```
 
-Sem nenhum ajuste, o Brandify ficaria acessível em `dominio.com/brandify/public/admin`. Copie `bin/root-htaccess.example` para `public_html/.htaccess` (renomeando) para que `dominio.com/brandify/admin` funcione sem o `/public` na URL — é uma reescrita interna do Apache, nada muda no código do projeto.
+Sem nenhum ajuste, o Brandify ficaria acessível em `dominio.com/brandify/public/admin`. Copie `bin/root-htaccess.example` para `public_html/.htaccess` (renomeando) para que `dominio.com/app/admin` funcione sem o `/public` na URL — é uma reescrita interna do Apache, nada muda no código do projeto.
+
+O segmento da URL (`app` no exemplo) é independente do nome da pasta no disco (`brandify`) — ajuste a regra do `.htaccess` se quiser outro segmento ou outro nome de pasta, eles não precisam coincidir.
 
 ## Ajuste de permissões em hosting compartilhado
 

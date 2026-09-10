@@ -7,12 +7,18 @@
 #   public_html/
 #   ├── index.html (ou outro conteúdo do site principal)
 #   ├── .htaccess       <- este arquivo, copiado para cá
-#   └── brandify/       <- clone deste repositório
+#   └── brandify/       <- clone deste repositório (o nome da pasta
+#   │                      pode ser qualquer um, não precisa bater com
+#   │                      o segmento da URL usado abaixo)
 #       └── public/
 #           ├── index.php
 #           └── .htaccess (o padrão do Laravel, não mexer)
 #
-# Resultado: dominio.com/brandify/admin funciona sem precisar digitar
+# O segmento da URL pública ("app" abaixo) é independente do nome da
+# pasta no disco ("brandify" abaixo) — ajuste os dois conforme
+# necessário, eles não precisam ser iguais.
+#
+# Resultado: dominio.com/app/admin funciona sem precisar digitar
 # dominio.com/brandify/public/admin.
 #
 # Se o Brandify responder pela raiz do domínio (document root do site
@@ -21,5 +27,5 @@
 # virtual host, não por reescrita de URL.
 
 RewriteEngine On
-RewriteCond %{REQUEST_URI} ^/brandify/(?!public/)
-RewriteRule ^brandify/(.*)$ brandify/public/$1 [L]
+RewriteCond %{REQUEST_URI} ^/app/(?!public/)
+RewriteRule ^app/(.*)$ brandify/public/$1 [L]
