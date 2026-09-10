@@ -85,6 +85,28 @@ O comando não faz nada a menos que exista o arquivo `storage/app/migrate.trigge
 
 O comando usa um lock (`storage/app/migrate.lock`) para não rodar duas vezes em paralelo caso uma execução anterior ainda esteja em andamento.
 
+## Site do cliente convivendo com o Brandify
+
+O domínio costuma já ter um site (institucional, landing page, etc.) e o Brandify entra como um serviço adicional. Duas formas de combinar os dois:
+
+### Brandify na raiz do domínio, site estático embutido
+
+Se o document root do domínio aponta direto para `public/` do Brandify (cenário padrão, sem subpasta), a rota `/` verifica `public/index.html`: se existir, serve esse arquivo como o site; se não existir, mostra a página padrão do Brandify. Basta colocar o site (HTML/CSS/JS estático) dentro de `public/` — não interfere em nada do projeto nem precisa de configuração extra no hosting. Não há suporte a PHP dinâmico nesse modo, já que `public/index.php` já é o front controller do Laravel.
+
+### Site próprio na raiz, Brandify em subpasta
+
+Se o site precisa de algo além de HTML estático (outro PHP, outro framework), o Brandify deve ficar isolado numa subpasta, ao lado do site — nesse caso a solução acima não se aplica. Estrutura esperada:
+
+```
+public_html/
+├── index.html (ou o que for o site)
+├── .htaccess          <- bin/root-htaccess.example, copiado para cá
+└── brandify/           <- clone deste repositório
+    └── public/
+```
+
+Sem nenhum ajuste, o Brandify ficaria acessível em `dominio.com/brandify/public/admin`. Copie `bin/root-htaccess.example` para `public_html/.htaccess` (renomeando) para que `dominio.com/brandify/admin` funcione sem o `/public` na URL — é uma reescrita interna do Apache, nada muda no código do projeto.
+
 ## Ajuste de permissões em hosting compartilhado
 
 O script `bin/fix-permissions.sh` ajusta as permissões de diretórios e arquivos após o deploy em hosting compartilhado. Copie `.env-security.example` para `.env-security` e ajuste os valores conforme o seu provedor.

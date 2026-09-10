@@ -1,0 +1,25 @@
+# .htaccess para a RAIZ do hosting (ex: public_html/.htaccess) quando o
+# Brandify convive lado a lado com outro site, em vez de responder pela
+# raiz do domínio.
+#
+# Estrutura esperada:
+#
+#   public_html/
+#   ├── index.html (ou outro conteúdo do site principal)
+#   ├── .htaccess       <- este arquivo, copiado para cá
+#   └── brandify/       <- clone deste repositório
+#       └── public/
+#           ├── index.php
+#           └── .htaccess (o padrão do Laravel, não mexer)
+#
+# Resultado: dominio.com/brandify/admin funciona sem precisar digitar
+# dominio.com/brandify/public/admin.
+#
+# Se o Brandify responder pela raiz do domínio (document root do site
+# já apontando direto para brandify/public/), este arquivo não é
+# necessário — o Apache/nginx já resolve isso pela configuração do
+# virtual host, não por reescrita de URL.
+
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/brandify/(?!public/)
+RewriteRule ^brandify/(.*)$ brandify/public/$1 [L]
