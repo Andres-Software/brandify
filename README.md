@@ -69,6 +69,22 @@ Ajuste a frequência (diária, semanal etc.) direto no painel de cron do hosting
 
 Na mesma tela de Configurações, o botão "Importar backup" permite enviar os arquivos `directories.csv` e `proposals.csv` (gerados por um backup anterior) para **substituir por completo** os dados atuais. Essa ação não pode ser desfeita.
 
+### Rodando migrations em produção (sem SSH)
+
+Como o hosting compartilhado não dá acesso a terminal, migrations não podem ser executadas diretamente após um deploy. Em vez de expor uma rota HTTP para isso, o Brandify usa um gatilho por arquivo, verificado por um cron que roda a cada minuto:
+
+```bash
+* * * * * php /caminho/para/o/projeto/artisan deploy:migrate-if-triggered >> /caminho/para/o/projeto/storage/logs/migrate-cron.log 2>&1
+```
+
+O comando não faz nada a menos que exista o arquivo `storage/app/migrate.trigger`. Para rodar as migrations pendentes:
+
+1. Crie um arquivo vazio em `storage/app/migrate.trigger` (pelo gerenciador de arquivos do painel, ou por FTP).
+2. No próximo minuto, o cron encontra o arquivo, roda `php artisan migrate --force` e remove o gatilho.
+3. Acompanhe o resultado em `storage/logs/migrate-cron.log`.
+
+O comando usa um lock (`storage/app/migrate.lock`) para não rodar duas vezes em paralelo caso uma execução anterior ainda esteja em andamento.
+
 ## Ajuste de permissões em hosting compartilhado
 
 O script `bin/fix-permissions.sh` ajusta as permissões de diretórios e arquivos após o deploy em hosting compartilhado. Copie `.env-security.example` para `.env-security` e ajuste os valores conforme o seu provedor.
