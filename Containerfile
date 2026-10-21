@@ -17,7 +17,7 @@ RUN npm run build
 # gerado em PHP 8.4 pode falhar o install quando a imagem avançar de versão
 # (platform_check do Composer trava). Por isso instala o composer DENTRO da
 # própria imagem runtime (PHP fixo), em vez de usar composer:2 como estágio.
-FROM docker.io/php:8.4-fpm-alpine AS vendor
+FROM docker.io/php:8.4.27-fpm-alpine3.24 AS vendor
 COPY --from=docker.io/library/composer:2 /usr/bin/composer /usr/bin/composer
 # zip: composer:2 vem com a extensão pronta; a imagem php:*-fpm-alpine não —
 # filament/actions (export de planilhas) exige em resolve-time e runtime.
@@ -31,7 +31,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # ---------- estágio 3: runtime ----------
-FROM docker.io/php:8.4-fpm-alpine
+FROM docker.io/php:8.4.27-fpm-alpine3.24
 
 # intl: obrigatória para o Filament; zip: filament/actions (export de planilhas)
 RUN apk add --no-cache nginx supervisor libpq icu-libs libzip \
