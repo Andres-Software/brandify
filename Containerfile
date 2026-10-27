@@ -34,7 +34,8 @@ RUN composer dump-autoload --optimize --no-dev
 FROM docker.io/php:8.4.27-fpm-alpine3.24
 
 # intl: obrigatória para o Filament; zip: filament/actions (export de planilhas)
-RUN apk add --no-cache nginx supervisor libpq icu-libs libzip \
+RUN apk upgrade --no-cache \
+ && apk add --no-cache nginx supervisor libpq icu-libs libzip \
  && apk add --no-cache --virtual .build postgresql-dev icu-dev libzip-dev $PHPIZE_DEPS \
  && docker-php-ext-install pdo_pgsql pcntl opcache bcmath intl zip \
  && apk del .build
